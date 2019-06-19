@@ -14,7 +14,6 @@ import org.apache.commons.cli.Options;
 
 public class LSCommand {
 	
-	boolean l;
 	boolean a;
 	boolean t;
 	boolean s;
@@ -31,11 +30,11 @@ public class LSCommand {
 			}
 			
 			try {
-				if(!args[1].equals("ls")) {
+				if(!args[0].equals("ls")) {
 					throw new Exception();
 				}
 			} catch (Exception e) {
-				System.out.println("There is no command \"" + args[1] + "\".");
+				System.out.println("There is no command \"" + args[0] + "\".");
 				System.exit(0);
 			}
 			
@@ -46,7 +45,31 @@ public class LSCommand {
 			File[] files1 = file.listFiles();
 			
 			if(a) {
-				for(String s : files) System.out.println(s);
+				if(t) {
+					for(File f : files1) {
+						String d = new SimpleDateFormat("MMM dd hh:mm").format(
+								new Date(f.lastModified())
+						);
+						System.out.println(f.getName() + " " + d);
+					}
+				}
+				else if(s) {
+					Arrays.sort(files);
+					for(String s : files) System.out.println(s);
+				}
+				else if (f && d) {
+					for(File f : files1) {
+						if(f.isFile()) System.out.println(f.getName() + ", Type : File");
+						else if(f.isDirectory()) System.out.println(f.getName() + ", Type : Directory");
+					}
+				}
+				else if(f) {
+					for(File f : files1) if(f.isFile()) System.out.println(f.getName());
+				}
+				else if(d) {
+					for(File f : files1) if(f.isDirectory()) System.out.println(f.getName());
+				}
+				else for(String s : files) System.out.println(s);
 			}
 			else if(t) {
 				for(File f : files1) {
@@ -61,6 +84,20 @@ public class LSCommand {
 			else if(s) {
 				Arrays.sort(files);
 				for(String s : files) if(!s.startsWith(".")) System.out.println(s);
+			}
+			else if(d && f) {
+				for(File f : files1) {
+					if(f.isFile()) {
+						if(!f.getName().startsWith(".")) {
+							System.out.println(f.getName() + ", Type : File");
+						}
+					}
+					else if(f.isDirectory()) {
+						if(!f.getName().startsWith(".")) {
+							System.out.println(f.getName() + ", Type : Directory");
+						}
+					}
+				}
 			}
 			else if(f) {
 				for(File f : files1) {
@@ -92,7 +129,6 @@ public class LSCommand {
 		try {
 			CommandLine cmd = parser.parse(options, args);
 
-			l = cmd.hasOption("l");
 			a = cmd.hasOption("a");
 			t = cmd.hasOption("t");
 			s = cmd.hasOption("s");
@@ -112,14 +148,8 @@ public class LSCommand {
 		Options options = new Options();
 
 		// add options by using OptionBuilder
-		options.addOption(Option.builder("l").longOpt("list")
-				.desc("List the files in directory with information")
-				.argName("lOption")
-				.build());
-
-		// add options by using OptionBuilder
 		options.addOption(Option.builder("a").longOpt("all")
-				.desc("Show the whole files in directory")
+				.desc("List the whole files in directory include hidden files")
 				.argName("aOption")
 				.build());
 		

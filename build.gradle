@@ -12,7 +12,7 @@ plugins {
 }
 
 apply plugin: 'application'
-mainClassName = "edu.handong.analysis.Main"
+mainClassName = "edu.handong.csee.bonus.Main"
 
 repositories {
     // Use jcenter for resolving your dependencies.
